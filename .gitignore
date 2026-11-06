@@ -86,6 +86,7 @@ graphify-out/*
 .codegraph/
 .PR/
 .next-analyze/*
+.next-verify/
 
 # Kiro local workspace state
 .kiro/
@@ -102,3 +103,9 @@ graphify-out/*
 start-dev-silent.cjs
 debug.log
 .scratch/
+
+# Project docs (contain operational secrets, kept local)
+AGENTS.md
+ARCHITECTURE.md
+PROGRESS.md
+RESELLER.md

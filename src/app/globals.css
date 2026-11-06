@@ -8,43 +8,49 @@
 .fonts-loaded .material-symbols-outlined { opacity: 1; transition: opacity .12s ease-out; }
 
 /* ============================================================
-   9Router palette — adopted from 9remote_private/web
-   Brand orange (dark) / soft coral (light), neutral warm bases
+   PrismGate palette — deep-space violet + spectrum cyan/magenta
+   A prism splits one beam into every colour; the product splits one
+   endpoint into every model. Cool indigo bases, spectral accents.
    ============================================================ */
 :root {
-  /* Brand scale (light) - centered on #E56A4A */
-  --color-brand-50: #fdf1ed;
-  --color-brand-100: #fadccf;
-  --color-brand-200: #f4b59c;
-  --color-brand-300: #ee8d6a;
-  --color-brand-400: #ea7855;
-  --color-brand-500: #E56A4A;
-  --color-brand-600: #cc5236;
-  --color-brand-700: #a64027;
-  --color-brand-800: #7a2f1d;
-  --color-brand-900: #4d1e12;
+  /* Brand scale (light) - centered on #6D28D9 violet */
+  --color-brand-50: #f4f1ff;
+  --color-brand-100: #e9e2ff;
+  --color-brand-200: #d6c9ff;
+  --color-brand-300: #b9a4ff;
+  --color-brand-400: #9875fa;
+  --color-brand-500: #6D28D9;
+  --color-brand-600: #5B21B6;
+  --color-brand-700: #4C1D95;
+  --color-brand-800: #3B1580;
+  --color-brand-900: #2A0F5C;
 
   /* Primary (legacy alias for backward compat with existing components) */
   --color-primary: var(--color-brand-500);
   --color-primary-hover: var(--color-brand-600);
 
-  /* Surfaces & backgrounds (light) */
-  --color-bg: #FDFAF6;
-  --color-bg-alt: #F7F3EE;
+  /* Spectrum accents — the prism split */
+  --color-accent-cyan: #06B6D4;
+  --color-accent-magenta: #D946EF;
+  --color-accent-violet: #8B5CF6;
+
+  /* Surfaces & backgrounds (light - cool violet-tinted paper) */
+  --color-bg: #FBF9FF;
+  --color-bg-alt: #F3EFFC;
   --color-surface: #ffffff;
-  --color-surface-2: #f4f4f5;
-  --color-surface-3: #e7e7e9;
-  --color-sidebar: rgba(244, 241, 236, 0.85);
+  --color-surface-2: #f4f2fb;
+  --color-surface-3: #e8e4f5;
+  --color-sidebar: rgba(244, 241, 253, 0.85);
 
   /* Borders */
-  --color-border: #e5e7eb;
-  --color-border-subtle: #f1f1f3;
+  --color-border: #e5e1f0;
+  --color-border-subtle: #f0edf8;
 
   /* Text */
-  --color-text: #0a0a0a;
-  --color-text-main: #0a0a0a;
-  --color-text-muted: #6B7280;
-  --color-text-subtle: #9CA3AF;
+  --color-text: #120c25;
+  --color-text-main: #120c25;
+  --color-text-muted: #6B6790;
+  --color-text-subtle: #9C98B4;
 
   /* Status */
   --color-danger: #cf222e;
@@ -53,67 +59,74 @@
   --color-info: #3B82F6;
 
   /* Radius */
-  --radius-brand: 10px;
-  --radius-brand-lg: 14px;
+  --radius-brand: 12px;
+  --radius-brand-lg: 18px;
 
   /* Shadows */
-  --shadow-soft: 0 1px 2px 0 rgba(0,0,0,0.04);
-  --shadow-warm: 0 2px 12px -2px rgba(229, 106, 74, 0.18);
-  --shadow-elevated: 0 12px 28px -4px rgba(60, 50, 45, 0.06);
+  --shadow-soft: 0 1px 2px 0 rgba(35, 16, 80, 0.05);
+  --shadow-warm: 0 6px 22px -6px rgba(109, 40, 217, 0.35);
+  --shadow-elevated: 0 14px 30px -6px rgba(40, 18, 90, 0.10);
   --shadow-elev:
-    inset 0 1px 0 0 rgba(255,255,255,0.8),
-    0 1px 2px rgba(15,23,42,0.04),
-    0 12px 36px -8px rgba(15,23,42,0.10);
-  --shadow-focus: 0 0 0 3px rgba(229,106,74,0.18);
+    inset 0 1px 0 0 rgba(255,255,255,0.85),
+    0 1px 2px rgba(24, 12, 60, 0.05),
+    0 16px 44px -10px rgba(24, 12, 60, 0.16);
+  --shadow-focus: 0 0 0 3px rgba(109, 40, 217, 0.20);
+  --shadow-prism: 0 10px 40px -10px rgba(109, 40, 217, 0.5);
 
   color-scheme: light;
 }
 
 .dark {
-  /* Brand scale (dark) - centered on #E56A4A, same as light for consistency */
-  --color-brand-50: #fdf1ed;
-  --color-brand-100: #fadccf;
-  --color-brand-200: #f4b59c;
-  --color-brand-300: #ee8d6a;
-  --color-brand-400: #ea7855;
-  --color-brand-500: #E56A4A;
-  --color-brand-600: #cc5236;
-  --color-brand-700: #a64027;
-  --color-brand-800: #7a2f1d;
-  --color-brand-900: #4d1e12;
+  /* Brand scale (dark) - brighter violet for contrast on near-black */
+  --color-brand-50: #f4f1ff;
+  --color-brand-100: #e9e2ff;
+  --color-brand-200: #d6c9ff;
+  --color-brand-300: #c4b5fd;
+  --color-brand-400: #a78bfa;
+  --color-brand-500: #8B5CF6;
+  --color-brand-600: #7C3AED;
+  --color-brand-700: #6D28D9;
+  --color-brand-800: #4C1D95;
+  --color-brand-900: #2A0F5C;
 
-  --color-primary: #E56A4A;
-  --color-primary-hover: #cc5236;
+  --color-primary: #8B5CF6;
+  --color-primary-hover: #7C3AED;
 
-  /* Surfaces (dark - Claude-like neutral warm) */
-  --color-bg: #1a1a1a;
-  --color-bg-alt: #1F1F1E;
-  --color-surface: #262626;
-  --color-surface-2: #303030;
-  --color-surface-3: #3a3a3a;
-  --color-sidebar: rgba(30, 30, 30, 0.85);
+  /* Spectrum accents — the prism split */
+  --color-accent-cyan: #22D3EE;
+  --color-accent-magenta: #F0ABFC;
+  --color-accent-violet: #A78BFA;
 
-  --color-border: #333333;
-  --color-border-subtle: #2a2a2a;
+  /* Surfaces (dark - deep space indigo) */
+  --color-bg: #0B0716;
+  --color-bg-alt: #130C27;
+  --color-surface: #171030;
+  --color-surface-2: #201745;
+  --color-surface-3: #2C2158;
+  --color-sidebar: rgba(19, 12, 39, 0.82);
 
-  --color-text: #ededed;
-  --color-text-main: #ededed;
-  --color-text-muted: #9ca3af;
-  --color-text-subtle: #6b7280;
+  --color-border: #2A2150;
+  --color-border-subtle: #201840;
+
+  --color-text: #EFEBFF;
+  --color-text-main: #EFEBFF;
+  --color-text-muted: #A79FC9;
+  --color-text-subtle: #6F6796;
 
   --color-danger: #ef4444;
-  --color-success: #22c55e;
+  --color-success: #34d399;
   --color-warning: #fbbf24;
-  --color-info: #60a5fa;
+  --color-info: #67e8f9;
 
-  --shadow-soft: 0 1px 2px 0 rgba(0,0,0,0.3);
-  --shadow-warm: 0 2px 12px -2px rgba(229, 106, 74, 0.25);
-  --shadow-elevated: 0 12px 28px -4px rgba(0, 0, 0, 0.45);
+  --shadow-soft: 0 1px 2px 0 rgba(0,0,0,0.4);
+  --shadow-warm: 0 6px 26px -6px rgba(139, 92, 246, 0.5);
+  --shadow-elevated: 0 16px 40px -8px rgba(0, 0, 0, 0.6);
   --shadow-elev:
-    inset 0 1px 0 0 rgba(255,255,255,0.06),
-    0 1px 2px rgba(0,0,0,0.4),
-    0 16px 48px -8px rgba(0,0,0,0.55);
-  --shadow-focus: 0 0 0 3px rgba(229, 106, 74, 0.18);
+    inset 0 1px 0 0 rgba(255,255,255,0.05),
+    0 1px 2px rgba(0,0,0,0.5),
+    0 20px 60px -10px rgba(0,0,0,0.7);
+  --shadow-focus: 0 0 0 3px rgba(139, 92, 246, 0.28);
+  --shadow-prism: 0 18px 60px -12px rgba(139, 92, 246, 0.55);
 
   color-scheme: dark;
 }
@@ -171,18 +184,18 @@ select {
   --color-info: var(--color-info);
 
   /* Static fallbacks (explicit per-mode usage if needed) */
-  --color-bg-light: #FCFBF9;
-  --color-bg-dark: #1a1a1a;
+  --color-bg-light: #FBF9FF;
+  --color-bg-dark: #0B0716;
   --color-surface-light: #ffffff;
-  --color-surface-dark: #262626;
-  --color-sidebar-light: #F4F1EC;
-  --color-sidebar-dark: #1F1F1E;
-  --color-border-light: #e5e7eb;
-  --color-border-dark: #333333;
-  --color-text-main-light: #0a0a0a;
-  --color-text-main-dark: #ededed;
-  --color-text-muted-light: #6B7280;
-  --color-text-muted-dark: #9ca3af;
+  --color-surface-dark: #171030;
+  --color-sidebar-light: #F4F1FD;
+  --color-sidebar-dark: #130C27;
+  --color-border-light: #e5e1f0;
+  --color-border-dark: #2A2150;
+  --color-text-main-light: #120c25;
+  --color-text-main-dark: #EFEBFF;
+  --color-text-muted-light: #6B6790;
+  --color-text-muted-dark: #A79FC9;
 
   /* Radius */
   --radius-brand: var(--radius-brand);
@@ -208,14 +221,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Selection - brand-tinted */
+/* Selection - prism-tinted */
 ::selection {
-  background-color: rgba(229, 106, 74, 0.25);
+  background-color: rgba(109, 40, 217, 0.18);
   color: var(--color-primary);
 }
 .dark ::selection {
-  background-color: rgba(229, 106, 74, 0.3);
-  color: var(--color-brand-300);
+  background-color: rgba(139, 92, 246, 0.32);
+  color: #EDE9FE;
 }
 
 /* iOS keyboard accent */
@@ -238,22 +251,22 @@ input, textarea {
   background-color: var(--color-primary);
 }
 
-/* Thin horizontal scrollbar - brand colored */
+/* Thin horizontal scrollbar - prism colored */
 .scroll-thin-x {
   scrollbar-width: thin;
-  scrollbar-color: rgba(229, 106, 74, 0.55) transparent;
+  scrollbar-color: rgba(139, 92, 246, 0.55) transparent;
 }
 .dark .scroll-thin-x {
-  scrollbar-color: rgba(229, 106, 74, 0.55) transparent;
+  scrollbar-color: rgba(34, 211, 238, 0.5) transparent;
 }
 .scroll-thin-x::-webkit-scrollbar { height: 3px; }
 .scroll-thin-x::-webkit-scrollbar-track { background: transparent; }
 .scroll-thin-x::-webkit-scrollbar-thumb {
-  background: rgba(229, 106, 74, 0.55);
+  background: rgba(139, 92, 246, 0.55);
   border-radius: 3px;
 }
 .dark .scroll-thin-x::-webkit-scrollbar-thumb {
-  background: rgba(229, 106, 74, 0.55);
+  background: rgba(34, 211, 238, 0.5);
 }
 
 /* Global thin mac-like scrollbars (overrides clunky Windows/Linux default) */
@@ -387,12 +400,12 @@ button:disabled,
 
 @keyframes border-glow {
   0%, 100% {
-    box-shadow: 0 0 5px rgba(229, 106, 74, 0.3), 0 0 10px rgba(229, 106, 74, 0.2);
-    border-color: rgba(229, 106, 74, 0.5);
+    box-shadow: 0 0 5px rgba(139, 92, 246, 0.3), 0 0 10px rgba(34, 211, 238, 0.2);
+    border-color: rgba(139, 92, 246, 0.5);
   }
   50% {
-    box-shadow: 0 0 10px rgba(229, 106, 74, 0.5), 0 0 20px rgba(229, 106, 74, 0.3);
-    border-color: rgba(229, 106, 74, 0.8);
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.5), 0 0 20px rgba(217, 70, 239, 0.3);
+    border-color: rgba(34, 211, 238, 0.8);
   }
 }
 .animate-border-glow { animation: border-glow 2s ease-in-out infinite; }
@@ -425,8 +438,8 @@ button:disabled,
   100% { transform: translateX(220%) skewX(-20deg); }
 }
 @keyframes ctaGlowPulse {
-  0%, 100% { box-shadow: 0 8px 24px -8px rgba(229, 106, 74, 0.45), 0 0 0 0 rgba(229, 106, 74, 0.5); }
-  50% { box-shadow: 0 12px 32px -8px rgba(229, 106, 74, 0.6), 0 0 0 8px rgba(229, 106, 74, 0); }
+  0%, 100% { box-shadow: 0 10px 30px -8px rgba(139, 92, 246, 0.55), 0 0 0 0 rgba(34, 211, 238, 0.45); }
+  50% { box-shadow: 0 14px 40px -8px rgba(217, 70, 239, 0.6), 0 0 0 10px rgba(34, 211, 238, 0); }
 }
 .btn-cta {
   position: relative;
@@ -452,13 +465,15 @@ button:disabled,
 .dot-grid-bg {
   background-color: var(--color-bg);
   background-image:
-    radial-gradient(circle at 15% 20%, rgba(229, 106, 74, 0.10) 0%, transparent 40%),
-    radial-gradient(circle at 85% 80%, rgba(229, 106, 74, 0.06) 0%, transparent 40%);
+    radial-gradient(circle at 12% 8%, rgba(139, 92, 246, 0.16) 0%, transparent 38%),
+    radial-gradient(circle at 88% 12%, rgba(34, 211, 238, 0.10) 0%, transparent 36%),
+    radial-gradient(circle at 78% 92%, rgba(217, 70, 239, 0.10) 0%, transparent 40%);
 }
 .dark .dot-grid-bg {
   background-image:
-    radial-gradient(circle at 15% 20%, rgba(229, 106, 74, 0.18) 0%, transparent 40%),
-    radial-gradient(circle at 85% 80%, rgba(229, 106, 74, 0.10) 0%, transparent 40%);
+    radial-gradient(circle at 12% 8%, rgba(139, 92, 246, 0.24) 0%, transparent 40%),
+    radial-gradient(circle at 88% 12%, rgba(34, 211, 238, 0.14) 0%, transparent 38%),
+    radial-gradient(circle at 78% 92%, rgba(217, 70, 239, 0.14) 0%, transparent 42%);
 }
 
 /* Landing-style faint grid overlay (use absolute pos inside relative parent) */
@@ -478,28 +493,28 @@ button:disabled,
   0%, 100% {
     transform: scale(1);
     box-shadow:
-      0 0 8px #fde047,
+      0 0 8px var(--color-accent-violet),
       0 0 20px color-mix(in srgb, var(--color-primary) 65%, transparent),
-      0 0 32px rgba(34, 211, 238, 0.4),
+      0 0 32px var(--color-accent-cyan),
       inset 0 0 10px rgba(253, 224, 71, 0.3);
   }
   50% {
     transform: scale(1.06);
     box-shadow:
-      0 0 14px #fef08a,
-      0 0 28px #facc15,
-      0 0 44px rgba(34, 211, 238, 0.6),
+      0 0 14px var(--color-accent-violet),
+      0 0 28px var(--color-accent-magenta),
+      0 0 44px var(--color-accent-cyan),
       inset 0 0 14px rgba(255, 255, 255, 0.25);
   }
 }
 @keyframes topology-router-icon-shake {
-  0%, 100% { transform: rotate(0deg) scale(1); filter: drop-shadow(0 0 2px #fde047); }
-  25% { transform: rotate(-5deg) scale(1.08); filter: drop-shadow(0 0 6px #facc15); }
-  75% { transform: rotate(5deg) scale(1.08); filter: drop-shadow(0 0 6px #22d3ee); }
+  0%, 100% { transform: rotate(0deg) scale(1); filter: drop-shadow(0 0 2px var(--color-accent-violet)); }
+  25% { transform: rotate(-5deg) scale(1.08); filter: drop-shadow(0 0 6px var(--color-accent-magenta)); }
+  75% { transform: rotate(5deg) scale(1.08); filter: drop-shadow(0 0 6px var(--color-accent-cyan)); }
 }
 @keyframes topology-router-label-flicker {
-  0%, 100% { text-shadow: 0 0 6px #fde047, 0 0 12px #22d3ee; }
-  50% { text-shadow: 0 0 10px #fff, 0 0 18px #facc15; }
+  0%, 100% { text-shadow: 0 0 6px var(--color-accent-violet), 0 0 12px var(--color-accent-cyan); }
+  50% { text-shadow: 0 0 10px #fff, 0 0 18px var(--color-accent-magenta); }
 }
 @keyframes topology-edge-dash {
   to { stroke-dashoffset: -36; }
@@ -601,4 +616,133 @@ button:disabled,
   border: none;
   border-top: 1px solid var(--color-border);
   margin: 1.5rem 0;
+}
+
+/* ============================================================
+   PrismGate - product-grade primitives
+   ============================================================ */
+
+/* Spectral text fill for hero headings and money values. */
+.text-prism-gradient {
+  background: linear-gradient(100deg, #c4b5fd 0%, #22d3ee 48%, #f0abfc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Dark customer-facing shell: always deep space, independent of theme. */
+.prism-shell {
+  background:
+    radial-gradient(1100px 620px at 82% -8%, rgba(124, 58, 237, 0.28) 0%, transparent 60%),
+    radial-gradient(900px 520px at 4% 0%, rgba(34, 211, 238, 0.16) 0%, transparent 55%),
+    radial-gradient(760px 520px at 55% 110%, rgba(217, 70, 239, 0.14) 0%, transparent 60%),
+    #080510;
+  color: #f2eeff;
+}
+
+.prism-grid {
+  background-image:
+    linear-gradient(to right, rgba(196, 181, 253, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(196, 181, 253, 0.12) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse 82% 62% at 50% 0%, black 20%, transparent 78%);
+  mask-image: radial-gradient(ellipse 82% 62% at 50% 0%, black 20%, transparent 78%);
+  opacity: 0.45;
+}
+
+.prism-panel {
+  background: linear-gradient(160deg, rgba(31, 22, 58, 0.88) 0%, rgba(17, 11, 33, 0.92) 100%);
+  border: 1px solid rgba(167, 139, 250, 0.18);
+  box-shadow: 0 24px 70px -30px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(18px);
+}
+
+.prism-panel-soft {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(167, 139, 250, 0.14);
+  backdrop-filter: blur(14px);
+}
+
+.prism-hairline {
+  border-color: rgba(167, 139, 250, 0.16);
+}
+
+.prism-glow {
+  box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.18), 0 24px 70px -26px rgba(124, 58, 237, 0.65);
+}
+
+.prism-btn-primary {
+  background: linear-gradient(110deg, #7c3aed 0%, #6d28d9 45%, #0e7490 100%);
+  box-shadow: 0 14px 34px -14px rgba(124, 58, 237, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+.prism-btn-primary:hover { filter: brightness(1.08); }
+
+.prism-focus:focus {
+  outline: none;
+  border-color: rgba(34, 211, 238, 0.6);
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.16);
+}
+
+/* Inputs that sit on the dark shell. */
+.prism-input {
+  background: rgba(10, 6, 22, 0.72);
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  color: #f2eeff;
+}
+.prism-input::placeholder { color: #6f6796; }
+.prism-input:focus {
+  outline: none;
+  border-color: rgba(34, 211, 238, 0.55);
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.14);
+}
+
+/* Animated aurora orb used on auth screens. */
+@keyframes prism-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(22px, -18px, 0) scale(1.06); }
+}
+.prism-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(70px);
+  pointer-events: none;
+  animation: prism-drift 14s ease-in-out infinite;
+}
+
+/* Soft sheen sweeping across the brand panel. */
+@keyframes prism-sheen {
+  0% { transform: translateX(-120%) skewX(-18deg); }
+  100% { transform: translateX(240%) skewX(-18deg); }
+}
+.prism-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 42%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.13), transparent);
+  animation: prism-sheen 5.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Admin console: theme-aware cards with a prism edge. */
+.prism-card {
+  position: relative;
+  border-radius: 18px;
+  border: 1px solid var(--color-border);
+  background:
+    radial-gradient(680px 220px at 100% -40%, rgba(139, 92, 246, 0.13) 0%, transparent 70%),
+    var(--color-surface);
+  box-shadow: var(--shadow-soft);
+}
+.prism-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(130deg, rgba(167, 139, 250, 0.5), transparent 34%, transparent 66%, rgba(34, 211, 238, 0.4));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }

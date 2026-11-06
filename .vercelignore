@@ -1,0 +1,55 @@
+# Vercel upload exclusions.
+#
+# Vercel rebuilds from source, so local build output, dependencies and runtime
+# state must not be uploaded (the .next tree alone is ~1.5 GB).
+#
+# IMPORTANT: patterns are gitignore syntax. Unanchored names like `test` also
+# match source directories such as src/app/api/models/test/, which breaks the
+# build with "Module not found". Keep everything root-anchored unless it is a
+# true artifact pattern.
+
+# Build output / dependencies (any depth, they are never source)
+.next
+.next-*
+node_modules
+out
+
+# Local engine runtime state
+/data
+/logs
+/source
+*.sqlite
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+
+# Secrets — never uploaded. Vercel env vars are the source of truth.
+.env
+.env.*
+!.env.example
+
+# Repo-local tooling and scratch
+/.git
+/.claude
+/.docs
+/.repo
+/.script
+/.codegraph
+/.PR
+/.kiro
+/.scratch
+/open-sse.old
+/gitbook
+/gitbooks
+/cli/.build-home
+
+# Local-only test harness and fixtures
+/e2e-ui.ps1
+/scripts/mock-upstream.cjs
+/test
+
+# Root documentation only
+/ARCHITECTURE.md
+/PROGRESS.md
+/RESELLER.md
+/AGENTS.md

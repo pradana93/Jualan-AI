@@ -3,6 +3,10 @@ import { getAdapter } from "../driver.js";
 import { parseJson, stringifyJson } from "../helpers/jsonCol.js";
 import { getMeta, setMeta } from "../helpers/metaStore.js";
 
+// Lazy import to avoid circular deps; reseller module is optional.
+import { getResellerConfig } from "@/lib/reseller/config.js";
+import { meterResellerCall } from "@/lib/reseller/gateway.js";
+
 function maskApiKey(key) {
   if (!key || typeof key !== "string") return null;
   const trimmed = key.trim();
@@ -241,6 +245,9 @@ export async function getActiveRequests() {
 }
 
 export async function saveRequestUsage(entry) {
+  const cfg = getResellerConfig();
+  const isResellerKey = cfg.enabled && entry?.apiKey && entry.apiKey.startsWith(cfg.keyPrefix);
+
   try {
     const db = await getAdapter();
 
@@ -309,6 +316,17 @@ export async function saveRequestUsage(entry) {
     if (inserted) {
       pushToRing(entry);
       scheduleStatsEvent("update", 250);
+
+      // Reseller billing (sk-9r- keys): meter once per persisted usage row —
+      // the `inserted` dedup above means a replayed stats write never
+      // double-charges. Fail-open: billing errors must never break usage stats.
+      if (isResellerKey) {
+        try {
+          await meterResellerCall(entry);
+        } catch (e) {
+          console.error("[reseller] metering failed:", e?.message || e);
+        }
+      }
     }
   } catch (e) {
     console.error("Failed to save usage stats:", e);

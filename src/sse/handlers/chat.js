@@ -28,6 +28,7 @@ import { getProjectIdForConnection } from "open-sse/services/projectId.js";
 import { stripModelContextMarker } from "open-sse/utils/modelMarkers.js";
 import { getKeyAccessContext, enforceKeyAccess, filterAdapterModels } from "../services/keyAccess.js";
 import { resolveSmartChoice } from "../services/systemoneRouter.js";
+import { gateResellerRequest } from "@/lib/reseller/gateway.js";
 
 /**
  * Handle chat completion request
@@ -73,17 +74,36 @@ export async function handleChat(request, clientRawRequest = null) {
     log.debug("AUTH", "No API key provided (local mode)");
   }
 
-  // Enforce API key if enabled in settings
+  // Reseller pre-flight gate for `sk-9r-` keys: validates the key, checks the
+  // owner's balance, rate limits and key-level model allowlist. Runs even when
+  // `requireApiKey` is off — a reseller key without balance must never serve
+  // for free. Non-reseller keys (and a disabled reseller module) pass straight
+  // through ("passthrough") to the stock flow below.
+  const resellerGate = await gateResellerRequest({ request, model: modelStr, clientRawRequest });
+  if (resellerGate && resellerGate.ok === false) {
+    log.warn("AUTH", `Reseller gate denied (${resellerGate.status}): ${resellerGate.error}`);
+    return errorResponse(
+      resellerGate.status,
+      resellerGate.error,
+      resellerGate.retryAfter ? { "retry-after": String(resellerGate.retryAfter) } : null
+    );
+  }
+  const isResellerKey = resellerGate && resellerGate.ok === true;
+
+  // Enforce API key if enabled in settings (skips reseller keys — the gate
+  // above already authenticated them against the reseller store).
   const settings = await getSettings();
   if (settings.requireApiKey) {
     if (!apiKey) {
       log.warn("AUTH", "Missing API key (requireApiKey=true)");
       return errorResponse(HTTP_STATUS.UNAUTHORIZED, "Missing API key");
     }
-    const valid = await isValidApiKey(apiKey);
-    if (!valid) {
-      log.warn("AUTH", "Invalid API key (requireApiKey=true)");
-      return errorResponse(HTTP_STATUS.UNAUTHORIZED, "Invalid API key");
+    if (!isResellerKey) {
+      const valid = await isValidApiKey(apiKey);
+      if (!valid) {
+        log.warn("AUTH", "Invalid API key (requireApiKey=true)");
+        return errorResponse(HTTP_STATUS.UNAUTHORIZED, "Invalid API key");
+      }
     }
   }
 

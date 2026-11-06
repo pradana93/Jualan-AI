@@ -31,6 +31,13 @@ const PUBLIC_API_PATHS = [
   "/api/auth/saml",
   "/api/version",
   "/api/settings/require-login",
+  // Platform-admin sign-in (reseller admin account or operator password).
+  // Lives outside /api/reseller so it stays reachable pre-auth.
+  "/api/admin/login",
+  // Reseller platform: self-authenticated with its own `reseller_session`
+  // cookie + `sk-9r-` API keys (src/lib/reseller/session.js). The dashboard
+  // JWT does not apply to customers, so these paths must bypass this guard.
+  "/api/reseller",
 ];
 
 // Public top-level prefixes (LLM API endpoints with their own API key auth).
@@ -152,9 +159,43 @@ function extractApiKey(request) {
   return request.nextUrl.searchParams?.get("key") || null;
 }
 
+// Reseller customer keys (src/lib/reseller) are validated against the reseller
+// store, not the local api-keys table. Read from env directly (no import) so
+// this module stays free of Node-only dependencies wherever it is bundled.
+const RESELLER_KEY_PREFIX = process.env.RESELLER_KEY_PREFIX || "sk-9r-";
+const RESELLER_ON = process.env.RESELLER_ENABLED !== "false";
+
+// Lazy helpers for the reseller platform — Node-only, so they are imported
+// inside the function bodies (same pattern as hasValidApiKey below).
+async function checkPlatformAdmin(request) {
+  try {
+    const { isPlatformAdmin } = await import("@/lib/reseller/adminAuth.js");
+    return await isPlatformAdmin(request);
+  } catch {
+    return false;
+  }
+}
+
+async function checkResellerSession(request) {
+  try {
+    const { hasResellerSession } = await import("@/lib/reseller/adminAuth.js");
+    return await hasResellerSession(request);
+  } catch {
+    return false;
+  }
+}
+
 async function hasValidApiKey(request) {
   const apiKey = extractApiKey(request);
   if (!apiKey) return false;
+  if (RESELLER_ON && apiKey.startsWith(RESELLER_KEY_PREFIX)) {
+    try {
+      const { isValidResellerKey } = await import("@/lib/reseller/gateway.js");
+      return await isValidResellerKey(apiKey);
+    } catch {
+      return false;
+    }
+  }
   return await validateApiKey(apiKey);
 }
 
@@ -232,56 +273,60 @@ export async function proxy(request) {
 
   // Deny-by-default for /api/* — public allow-list bypasses, everything else requires auth.
   if (pathname.startsWith("/api/")) {
+    // Reseller admin slice: /api/reseller is public because customers
+    // self-authenticate, but the admin surface must always be a platform
+    // admin (handler-level requireAdmin enforces this as well).
+    if (pathname.startsWith("/api/reseller/admin/")) {
+      if (await checkPlatformAdmin(request)) return NextResponse.next();
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     if (isPublicApi(pathname)) return NextResponse.next();
     if (await hasValidCliToken(request) || await isAuthenticated(request))
       return NextResponse.next();
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Protect all dashboard routes
-  if (pathname.startsWith("/dashboard")) {
-    let requireLogin = true;
-    let tunnelDashboardAccess = true;
+  // Handle /admin/login specifically to allow it without admin auth
+  if (pathname === "/admin/login") {
+    return NextResponse.next();
+  }
 
+  // Protect all dashboard routes — admin-only.
+  //
+  // /dashboard is the platform control room. Two credentials open it: the
+  // 9router operator JWT (existing dashboard login) and the reseller admin
+  // session (the RESELLER_ADMIN_EMAIL account). Everyone else is bounced:
+  // customers with a reseller session go to the portal at /, anonymous
+  // visitors go to /signin.
+  if (pathname.startsWith("/dashboard")) {
     try {
       const settings = await loadSettings();
-      if (settings) {
-        requireLogin = settings.requireLogin !== false;
-        tunnelDashboardAccess = settings.tunnelDashboardAccess === true;
-
-        // Block tunnel/tailscale access if disabled (redirect to login)
-        if (!tunnelDashboardAccess) {
-          const host = (request.headers.get("host") || "").split(":")[0].toLowerCase();
-          const tunnelHost = settings.tunnelUrl ? new URL(settings.tunnelUrl).hostname.toLowerCase() : "";
-          const tailscaleHost = settings.tailscaleUrl ? new URL(settings.tailscaleUrl).hostname.toLowerCase() : "";
-          if ((tunnelHost && host === tunnelHost) || (tailscaleHost && host === tailscaleHost)) {
-            return NextResponse.redirect(new URL("/login", request.url));
-          }
+      if (settings && settings.tunnelDashboardAccess !== true) {
+        const host = (request.headers.get("host") || "").split(":")[0].toLowerCase();
+        const tunnelHost = settings.tunnelUrl ? new URL(settings.tunnelUrl).hostname.toLowerCase() : "";
+        const tailscaleHost = settings.tailscaleUrl ? new URL(settings.tailscaleUrl).hostname.toLowerCase() : "";
+        if ((tunnelHost && host === tunnelHost) || (tailscaleHost && host === tailscaleHost)) {
+          return NextResponse.redirect(new URL("/signin", request.url));
         }
       }
     } catch {
-      // On error, keep defaults (require login, block tunnel)
+      // On error, fall through to the admin check below (fail closed).
     }
 
-    // If login not required, allow through
-    if (!requireLogin) return NextResponse.next();
-
-    // Verify JWT token
-    const token = request.cookies.get("auth_token")?.value;
-    if (token) {
-      if (await verifyDashboardAuthToken(token)) {
-        return NextResponse.next();
-      } else {
-        return NextResponse.redirect(new URL("/login", request.url));
-      }
+    if (await checkPlatformAdmin(request)) return NextResponse.next();
+    if (await checkResellerSession(request)) {
+      return NextResponse.redirect(new URL("/", request.url));
     }
-
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL("/admin/login", request.url));
   }
 
-  // Redirect / to /dashboard if logged in, or /dashboard if it's the root
+  // Portal admin route — top-level pages stay on Next.js defaults here; auth is
+  // enforced inside the route handlers themselves.
+  if (pathname === "/signin") return NextResponse.next();
+
+  // Portal lives at / — no redirect.
   if (pathname === "/") {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.next();
   }
 
   return NextResponse.next();

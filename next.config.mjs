@@ -63,43 +63,55 @@ const nextConfig = {
     return config;
   },
   async rewrites() {
+    // Split deployment (ARCHITECTURE.md §4.1).
+    //
+    // Locally the engine serves the gateway itself, so /v1 rewrites to the
+    // internal route handlers. On Vercel the engine is NOT present — the
+    // reseller store lives in Supabase but metering runs inside the engine
+    // process — so /v1 must be proxied out to the tunnel.
+    //
+    // GATEWAY_ENGINE_URL is read at build time (rewrites are baked into the
+    // build). Leave it unset for a self-hosted engine.
+    const engine = (process.env.GATEWAY_ENGINE_URL || "").replace(/\/+$/, "");
+    const toEngine = (p) => (engine ? `${engine}${p}` : p);
+
     return [
       {
         source: "/v1/v1/:path*",
-        destination: "/api/v1/:path*"
+        destination: toEngine("/api/v1/:path*"),
       },
       {
         source: "/v1/v1",
-        destination: "/api/v1"
+        destination: toEngine("/api/v1"),
       },
       {
         source: "/codex/:path*",
-        destination: "/api/v1/responses"
+        destination: toEngine("/api/v1/responses"),
       },
       {
         source: "/responses",
-        destination: "/api/v1/responses"
+        destination: toEngine("/api/v1/responses"),
       },
       {
         source: "/systemone",
-        destination: "/api/v1/systemone"
+        destination: toEngine("/api/v1/systemone"),
       },
       {
         source: "/v1beta/:path*",
-        destination: "/api/v1beta/:path*"
+        destination: toEngine("/api/v1beta/:path*"),
       },
       {
         source: "/v1beta",
-        destination: "/api/v1beta"
+        destination: toEngine("/api/v1beta"),
       },
       {
         source: "/v1/:path*",
-        destination: "/api/v1/:path*"
+        destination: toEngine("/api/v1/:path*"),
       },
       {
         source: "/v1",
-        destination: "/api/v1"
-      }
+        destination: toEngine("/api/v1"),
+      },
     ];
   }
 };

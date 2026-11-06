@@ -176,6 +176,13 @@ const getPageInfo = (pathname) => {
       icon: "api",
       breadcrumbs: [],
     };
+  if (pathname.includes("/reseller"))
+    return {
+      title: "Reseller Platform",
+      description: "Customers, pricing and top-up approvals",
+      icon: "storefront",
+      breadcrumbs: [],
+    };
   return { title: "", description: "", breadcrumbs: [] };
 };
 

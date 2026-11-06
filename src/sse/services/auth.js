@@ -4,6 +4,7 @@ import { formatRetryAfter, checkFallbackError, isModelLockActive, buildModelLock
 import { MAX_RATE_LIMIT_COOLDOWN_MS } from "open-sse/config/errorConfig.js";
 import { resolveProviderId, FREE_PROVIDERS } from "@/shared/constants/providers.js";
 import { getAntigravityQuotaCache, getAntigravityModelQuota } from "./antigravityQuota.js";
+import { isResellerKey, isValidResellerKey } from "@/lib/reseller/gateway.js";
 import * as log from "../utils/logger.js";
 
 // Mutex to prevent race conditions during account selection
@@ -365,8 +366,14 @@ export function extractApiKey(request) {
 
 /**
  * Validate API key (optional - for local use can skip)
+ *
+ * Reseller keys (`sk-9r-...`, src/lib/reseller) are validated against the
+ * reseller store instead of the local api-keys table, so paid customer keys
+ * work on every modality that funnels through this check. Balance/rate/model
+ * enforcement happens earlier in the chat pipeline (gateResellerRequest).
  */
 export async function isValidApiKey(apiKey) {
   if (!apiKey) return false;
+  if (isResellerKey(apiKey)) return await isValidResellerKey(apiKey);
   return await validateApiKey(apiKey);
 }
